@@ -123,12 +123,15 @@ public class RSAConfidentiality {
   //read key parameters from a file and generate the public key 
   public static PublicKey readPubKeyFromFile(String keyFileName) 
       throws IOException {
-
-    InputStream in = 
-        RSAConfidentiality.class.getResourceAsStream(keyFileName);
+        
+    /*InputStream in = 
+        RSAConfidentiality.class.getResourceAsStream(keyFileName);*/
+      
     ObjectInputStream oin =
-        new ObjectInputStream(new BufferedInputStream(in));
-
+        new ObjectInputStream(new BufferedInputStream(new FileInputStream(keyFileName)));
+        //new ObjectInputStream(new BufferedInputStream(in));
+        System.out.println("OIS created");
+    
     try {
       BigInteger m = (BigInteger) oin.readObject();
       BigInteger e = (BigInteger) oin.readObject();
@@ -145,6 +148,7 @@ public class RSAConfidentiality {
       throw new RuntimeException("Spurious serialisation error", e);
     } finally {
       oin.close();
+      //in.close();
     }
   }
 
@@ -153,10 +157,11 @@ public class RSAConfidentiality {
   public static PrivateKey readPrivKeyFromFile(String keyFileName) 
       throws IOException {
 
-    InputStream in = 
-        RSAConfidentiality.class.getResourceAsStream(keyFileName);
+    /*InputStream in = 
+        RSAConfidentiality.class.getResourceAsStream(keyFileName);*/
     ObjectInputStream oin =
-        new ObjectInputStream(new BufferedInputStream(in));
+        new ObjectInputStream(new BufferedInputStream(new FileInputStream(keyFileName)));
+        //new ObjectInputStream(new BufferedInputStream(in));
 
     try {
       BigInteger m = (BigInteger) oin.readObject();

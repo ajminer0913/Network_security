@@ -23,12 +23,20 @@ public class KeyGen {
     System.out.println("Please input a 16 character String to be used as the Symmetric Key: ");
     String symmetricKey = scan.nextLine();
     scan.close();
+
+    /*try (BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream("symmetric.key"));
+            ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(symmetricKey);
+            oos.close();
+        }*/
+    
+      
     BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream("symmetric.key"));
     out.write(symmetricKey.getBytes("UTF-8"));
     out.close();
     //byte[] input = "x012340123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF".getBytes();
 	//117 characters, so input[] includes 117 bytes.
-    Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+    //Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 
     //Generate a pair of keys
     SecureRandom random = new SecureRandom();
@@ -41,7 +49,7 @@ public class KeyGen {
     Key pubKeyX = pairX.getPublic();
     Key privKeyX = pairX.getPrivate();
     KeyPair pairY = generator.generateKeyPair();
-    Key pubKeyY = pairX.getPublic();
+    Key pubKeyY = pairY.getPublic();
     Key privKeyY = pairY.getPrivate();
 
     /* first, encryption & decryption via the paired keys */
@@ -92,8 +100,8 @@ public class KeyGen {
 
     
     //read the keys back from the files
-    PublicKey pubKey2 = readPubKeyFromFile("RSAPublic.key");
-    PrivateKey privKey2 = readPrivKeyFromFile("RSAPrivate.key");
+    //PublicKey pubKey2 = readPubKeyFromFile("RSAPublic.key");
+    //PrivateKey privKey2 = readPrivKeyFromFile("RSAPrivate.key");
 
     //encrypt & decrypt using the keys from the files
     /*byte[] input2 = "Hello World! (using the keys from files)".getBytes();
