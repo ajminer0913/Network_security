@@ -30,18 +30,21 @@ public class Sender {
       
       //System.out.println("==Java==");
       //System.out.println("plain:   " + plaintext);
-      String hash = SHA256.md(fileName);
+      //String hash = SHA256.md(fileName);
+      byte[] hashArray = SHA256.md(fileName);
       //System.out.println(SHA256.md(fileName));
       //AES Encryption of SHA 256
       //byte[] cipher = encrypt();
       
-      byte[] hashArray = hash.getBytes();
+      //byte[] hashArray = hash.getBytes();
+      //System.out.println("Hash array length: " + hashArray.length);
       System.out.println("Do you want to invert the first byte in SHA256? (Y or N): ");
       String byteInvertInput = scan.nextLine();
       if (byteInvertInput.contains("Y") || byteInvertInput.contains("y")){
         hashArray[0] = (byte) ~hashArray[0];
       }
-      hash = new String(hashArray);
+      
+      //hash = new String(hashArray);
 
       //Display hash in hex
       System.out.println("Hash in Hex: \n");
@@ -78,9 +81,20 @@ public class Sender {
       SecretKeySpec key = new SecretKeySpec(symmetricKey.getBytes("UTF-8"), "AES");
       cipher.init(Cipher.ENCRYPT_MODE, key,new IvParameterSpec(IV.getBytes("UTF-8")));
       byte[] cipherText = cipher.doFinal(hashArray, 0, 32);
+
+      //Display Cipher Text of hash
+      System.out.println("\nCiphertext of hash: \n");
+      for (int k=0; k<cipherText.length; k++) {
+        System.out.format("%2X ", cipherText[k]) ;
+        /*if (j >= 15) {
+          System.out.println("");
+          j=-1;
+        }*/
+      }
       
       //Write AES Encryption to message.add-msg file
       BufferedOutputStream outAes = new BufferedOutputStream(new FileOutputStream("message.add-msg"));
+      //System.out.println("Cipher text length: " + cipherText.length);
       outAes.write(cipherText, 0, cipherText.length);
       outAes.close();
 
@@ -111,11 +125,11 @@ public class Sender {
       bos.close();
       
       //Display cipher text
-      System.out.print("\ncipher:  ");
+      /*System.out.print("\ncipher:  ");
       for (int i=0; i<cipherText.length; i++)
         //System.out.format("%2X ", new Byte(cipher[i]));
         System.out.format("%2X ", cipherText[i]);
-      System.out.println("");
+      System.out.println("");*/
 
       Cipher cipherRSA = Cipher.getInstance("RSA/ECB/PKCS1Padding");
       PublicKey pubKeyY = RSAConfidentiality.readPubKeyFromFile("YPublic.key");
@@ -124,35 +138,44 @@ public class Sender {
 
       BufferedInputStream msgFileRSA = new BufferedInputStream(new FileInputStream("message.add-msg"));
       byte[] plaintextRSA = new byte[117];
-      byte[] ciphertextRSA = new byte[117];
-      //byte[] lastPlaintextRSA = new byte[117];
-      //to ensure a new encryption 
-      FileOutputStream fosClearRSA = new FileOutputStream("message.rsacipher");
-      fosClearRSA.write("".getBytes());
-      fosClearRSA.close();
-      BufferedOutputStream bosRSA = new BufferedOutputStream(new FileOutputStream("message.rsacipher", true));
+      byte[] ciphertextRSA = new byte[128];
+      
+      //to clear the file
+      /*BufferedOutputStream bosClearRSA = new BufferedOutputStream(new FileOutputStream("message.rsacipher"));
+      bosClearRSA.write("".getBytes());
+      bosClearRSA.close();*/
+      //BufferedOutputStream bosRSA = new BufferedOutputStream(new FileOutputStream("message.rsacipher", true));
+      BufferedOutputStream bosRSA = new BufferedOutputStream(new FileOutputStream("message.rsacipher"));
       //msgFile.read(plaintext);
       int numBytesReadRSA = plaintextRSA.length;
 
-      while (numBytesReadRSA == plaintextRSA.length){
-        //msgFile.read(plaintext, 0, plaintext.length);
-        if (numBytesReadRSA <= 0){
-          break;
-        }
-        else if(numBytesReadRSA < plaintextRSA.length){
-          //lastPlaintextRSA = new byte[numBytesReadRSA];
-          plaintextRSA = new byte[numBytesReadRSA];
-          //numBytesReadRSA = msgFileRSA.read(lastPlaintextRSA, 0, lastPlaintextRSA.length);
-          numBytesReadRSA = msgFileRSA.read(plaintextRSA, 0, plaintextRSA.length);
-          ciphertextRSA = cipherRSA.doFinal(plaintextRSA, 0, numBytesReadRSA);
-          bosRSA.write(ciphertextRSA, 0, numBytesReadRSA);
-        }
-        else{
-          numBytesReadRSA = msgFileRSA.read(plaintextRSA, 0, plaintextRSA.length);
-          ciphertextRSA = cipherRSA.doFinal(plaintextRSA, 0, plaintextRSA.length);
-          bosRSA.write(ciphertextRSA, 0, ciphertextRSA.length);
-        }
-        
+      while ((numBytesReadRSA = msgFileRSA.read(plaintextRSA, 0, plaintextRSA.length)) > 0){
+	
+        /*System.out.println("plaintextRSA: (" + plaintextRSA.length + "bytes)");
+        for (int i=0, j=0; i<plaintextRSA.length; i++, j++) {
+          System.out.format("%2X ", plaintextRSA[i]) ;
+          if (j >= 15) {
+            System.out.println("");
+            j=-1;
+          }
+        }*/
+        //System.out.println("");
+
+        ciphertextRSA = cipherRSA.doFinal(plaintextRSA, 0, numBytesReadRSA);
+        //System.out.println(ciphertextRSA);
+        bosRSA.write(ciphertextRSA, 0, ciphertextRSA.length);
+         
+	
+        //System.out.println("ciphertextRSA: (" + ciphertextRSA.length + "bytes)");
+        /*for (int i=0, j=0; i<ciphertextRSA.length; i++, j++) {
+          System.out.format("%2X ", ciphertextRSA[i]) ;
+          if (j >= 15) {
+            System.out.println("");
+            j=-1;
+          }
+        }*/
+        //System.out.println("");
+
         
         /*if (numBytesReadRSA < plaintextRSA.length){
           ciphertextRSA = cipherRSA.doFinal(plaintextRSA, 0, numBytesReadRSA);
@@ -165,6 +188,41 @@ public class Sender {
         
 
       }
+
+      //Old while loop
+      /*while (numBytesReadRSA == plaintextRSA.length){
+        //msgFile.read(plaintext, 0, plaintext.length);
+        if (numBytesReadRSA <= 0){
+          break;
+        }
+        else if(numBytesReadRSA < plaintextRSA.length){
+          //lastPlaintextRSA = new byte[numBytesReadRSA];
+          plaintextRSA = new byte[numBytesReadRSA];
+          //numBytesReadRSA = msgFileRSA.read(lastPlaintextRSA, 0, lastPlaintextRSA.length);
+          numBytesReadRSA = msgFileRSA.read(plaintextRSA, 0, plaintextRSA.length);
+          ciphertextRSA = cipherRSA.doFinal(plaintextRSA, 0, numBytesReadRSA);
+          bosRSA.write(ciphertextRSA, 0, numBytesReadRSA);
+          System.out.println(ciphertextRSA);
+        }
+        else{
+          numBytesReadRSA = msgFileRSA.read(plaintextRSA, 0, plaintextRSA.length);
+          ciphertextRSA = cipherRSA.doFinal(plaintextRSA, 0, plaintextRSA.length);
+          System.out.println(ciphertextRSA);
+          bosRSA.write(ciphertextRSA, 0, ciphertextRSA.length);
+        }
+        
+        
+        /*if (numBytesReadRSA < plaintextRSA.length){
+          ciphertextRSA = cipherRSA.doFinal(plaintextRSA, 0, numBytesReadRSA);
+          bosRSA.write(ciphertextRSA, 0, numBytesReadRSA);
+        }
+        else{
+          ciphertextRSA = cipherRSA.doFinal(plaintextRSA, 0, numBytesReadRSA);
+          bosRSA.write(plaintextRSA, 0, plaintextRSA.length);
+        }
+        
+
+      }*/
     msgFileRSA.close();
     bosRSA.close();
 

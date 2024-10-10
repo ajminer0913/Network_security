@@ -94,9 +94,9 @@ public class KeyGen {
         privKSpecX.getPrivateExponent());
 
     saveToFile("YPublic.key", pubKSpecY.getModulus(), 
-        pubKSpecX.getPublicExponent());
+        pubKSpecY.getPublicExponent());
     saveToFile("YPrivate.key", privKSpecY.getModulus(), 
-        privKSpecX.getPrivateExponent());
+        privKSpecY.getPrivateExponent());
 
     
     //read the keys back from the files
@@ -154,7 +154,7 @@ public class KeyGen {
       throws IOException {
 
     InputStream in = 
-        RSAConfidentiality.class.getResourceAsStream(keyFileName);
+        KeyGen.class.getResourceAsStream(keyFileName);
     ObjectInputStream oin =
         new ObjectInputStream(new BufferedInputStream(in));
 
@@ -183,7 +183,7 @@ public class KeyGen {
       throws IOException {
 
     InputStream in = 
-        RSAConfidentiality.class.getResourceAsStream(keyFileName);
+        KeyGen.class.getResourceAsStream(keyFileName);
     ObjectInputStream oin =
         new ObjectInputStream(new BufferedInputStream(in));
 

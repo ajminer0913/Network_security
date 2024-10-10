@@ -10,7 +10,7 @@ public class SHA256{
     System.out.println("test.txt: " + md("test.txt"));
   }*/
 
-  public static String md(String f) throws Exception {
+  public static byte[] md(String f) throws Exception {
     BufferedInputStream file = new BufferedInputStream(new FileInputStream(f));
     MessageDigest md = MessageDigest.getInstance("SHA-256");
     DigestInputStream in = new DigestInputStream(file, md);
@@ -33,8 +33,8 @@ public class SHA256{
       }
     }
     System.out.println("");    
-
-    return new String(hash);
+    return hash;
+    //return new String(hash);
   }
 }
 

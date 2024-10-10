@@ -130,7 +130,7 @@ public class RSAConfidentiality {
     ObjectInputStream oin =
         new ObjectInputStream(new BufferedInputStream(new FileInputStream(keyFileName)));
         //new ObjectInputStream(new BufferedInputStream(in));
-        System.out.println("OIS created");
+        
     
     try {
       BigInteger m = (BigInteger) oin.readObject();
@@ -167,8 +167,8 @@ public class RSAConfidentiality {
       BigInteger m = (BigInteger) oin.readObject();
       BigInteger e = (BigInteger) oin.readObject();
 
-      System.out.println("Read from " + keyFileName + ": modulus = " + 
-          m.toString() + ", exponent = " + e.toString() + "\n");
+      /*System.out.println("Read from " + keyFileName + ": modulus = " + 
+          m.toString() + ", exponent = " + e.toString() + "\n");*/
 
       RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(m, e);
       KeyFactory factory = KeyFactory.getInstance("RSA");
