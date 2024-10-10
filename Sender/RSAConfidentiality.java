@@ -136,8 +136,8 @@ public class RSAConfidentiality {
       BigInteger m = (BigInteger) oin.readObject();
       BigInteger e = (BigInteger) oin.readObject();
 
-      System.out.println("Read from " + keyFileName + ": modulus = " + 
-          m.toString() + ", exponent = " + e.toString() + "\n");
+      /*System.out.println("Read from " + keyFileName + ": modulus = " + 
+          m.toString() + ", exponent = " + e.toString() + "\n");*/
 
       RSAPublicKeySpec keySpec = new RSAPublicKeySpec(m, e);
       KeyFactory factory = KeyFactory.getInstance("RSA");
